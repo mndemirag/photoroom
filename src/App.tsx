@@ -11,17 +11,22 @@ import { Folder } from './components/Folder';
 function App() {
   const [results, setResults] = useState<string[]>([])
   const [folders, setFolders] = useState<string[]>(['Untitled Folder'])
-  const [folderResult, setFolderResult] = useState<Object>({ folderName: "", result: "" })
+  const [folderResult, setFolderResult] = useState<{}>([{ folderName: "", result: [] }])
 
   useEffect(() => {
     const results = JSON.parse(localStorage.getItem('results') as string);
+    const mapping = JSON.parse(localStorage.getItem('mapping') as string);
     if (results) {
       setResults(results);
+    }
+    if (mapping) {
+      setFolderResult(mapping);
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('results', JSON.stringify(results));
+    localStorage.setItem('mapping', JSON.stringify(folderResult));
   }, [folderResult, results]);
 
   let uploadImageToServer = (file: File) => {
@@ -58,7 +63,7 @@ function App() {
         const base64Result = BASE64_IMAGE_HEADER + result.result_b64
 
         setResults(arr => [...arr, base64Result])
-        setFolderResult(prev => ({ ...prev, folderName: "Untitled Folder", result: base64Result }))
+        setFolderResult([folderResult, { folderName: "Untitled Folder", result: results }])
       })
       .catch(error => {
         console.error(error)
