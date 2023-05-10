@@ -3,6 +3,7 @@ import './App.css';
 import AddButton from './components/AddButton';
 import loadImage, { LoadImageResult } from 'blueimp-load-image';
 import { API_KEY, API_URL, BASE64_IMAGE_HEADER } from './Constants';
+import { Folder } from './components/Folder';
 
 function App() {
   const [results, setResults] = useState<string[]>([])
@@ -70,8 +71,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        {results.length !== 0 && <Folder results={results} />}
         <AddButton onImageAdd={onImageAdd} />
-        {results.length !== 0 && results.map(result => <img src={result} width={300} alt="result from the API" />)}
       </header>
     </div>
   );
