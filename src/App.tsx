@@ -1,12 +1,23 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import './App.css';
 import AddButton from './components/AddButton';
 import loadImage, { LoadImageResult } from 'blueimp-load-image';
 import { API_KEY, API_URL, BASE64_IMAGE_HEADER } from './Constants';
 
 function App() {
-  const [result, setResult] = useState<string | null>(null)
-  
+  const [results, setResults] = useState<string[]>([])
+
+  useEffect(() => {
+    const results = JSON.parse(localStorage.getItem('results') as string);
+    if (results) {
+      setResults(results);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('results', JSON.stringify(results));
+  }, [results]);
+
   let uploadImageToServer = (file: File) => {
     loadImage(
       file,
@@ -17,7 +28,7 @@ function App() {
       })
       .then(async (imageData: LoadImageResult) => {
         let image = imageData.image as HTMLCanvasElement
-        
+
         let imageBase64 = image.toDataURL("image/png")
         let imageBase64Data = imageBase64.replace(BASE64_IMAGE_HEADER, "")
         let data = {
@@ -39,31 +50,31 @@ function App() {
 
         const result = await response.json();
         const base64Result = BASE64_IMAGE_HEADER + result.result_b64
-        setResult(base64Result)
+        setResults(arr => [...arr, base64Result])
+        console.log(results)
       })
-      
+
       .catch(error => {
         console.error(error)
       })
+  }
+
+  let onImageAdd = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      uploadImageToServer(e.target.files[0])
+    } else {
+      console.error("No file was picked")
     }
-    
-    let onImageAdd = (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files[0]) {
-        uploadImageToServer(e.target.files[0])
-      } else {
-        console.error("No file was picked")
-      }
-    }
-    
-    return (
-      <div className="App">
-        <header className="App-header">
-          {!result && <AddButton onImageAdd={onImageAdd}/>}
-          {result && <img src={result} width={300} alt="result from the API"/>}
-        </header>
-      </div>
-      );
-    }
-    
-    export default App;
-    
+  }
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <AddButton onImageAdd={onImageAdd} />
+        {results.length !== 0 && results.map(result => <img src={result} width={300} alt="result from the API" />)}
+      </header>
+    </div>
+  );
+}
+
+export default App;
