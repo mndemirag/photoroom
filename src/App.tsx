@@ -3,10 +3,15 @@ import './App.css';
 import AddButton from './components/AddButton';
 import loadImage, { LoadImageResult } from 'blueimp-load-image';
 import { API_KEY, API_URL, BASE64_IMAGE_HEADER } from './Constants';
+import { Button } from '@mui/material';
+import { Add } from '@mui/icons-material';
+import { FolderList } from './components/FolderList';
 import { Folder } from './components/Folder';
 
 function App() {
   const [results, setResults] = useState<string[]>([])
+  const [folders, setFolders] = useState<string[]>(['Untitled Folder'])
+  const [folderResult, setFolderResult] = useState<Object>({ folderName: "", result: "" })
 
   useEffect(() => {
     const results = JSON.parse(localStorage.getItem('results') as string);
@@ -17,7 +22,7 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('results', JSON.stringify(results));
-  }, [results]);
+  }, [folderResult, results]);
 
   let uploadImageToServer = (file: File) => {
     loadImage(
@@ -51,10 +56,10 @@ function App() {
 
         const result = await response.json();
         const base64Result = BASE64_IMAGE_HEADER + result.result_b64
-        setResults(arr => [...arr, base64Result])
-        console.log(results)
-      })
 
+        setResults(arr => [...arr, base64Result])
+        setFolderResult(prev => ({ ...prev, folderName: "Untitled Folder", result: base64Result }))
+      })
       .catch(error => {
         console.error(error)
       })
@@ -69,12 +74,17 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ padding: "12px" }}>
       <header className="App-header">
+        <Button variant="outlined" startIcon={<Add />} sx={{ marginBottom: 4 }} onClick={() => setFolders(arr => [...arr, 'New Folder'])}>
+          Add a new folder
+        </Button>
+        <FolderList folders={folders} />
         {results.length !== 0 && <Folder results={results} />}
         <AddButton onImageAdd={onImageAdd} />
+
       </header>
-    </div>
+    </div >
   );
 }
 

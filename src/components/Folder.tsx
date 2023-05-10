@@ -11,7 +11,7 @@ export const Folder = ({ results }: Props) => {
   const [open, setOpen] = useState(true);
 
   const handleClick = () => {
-    setOpen(!open);
+    setOpen(!open)
   };
 
   return (
@@ -25,7 +25,7 @@ export const Folder = ({ results }: Props) => {
               </Avatar>
             </ListItemAvatar>
             <ListItemButton onClick={handleClick}>
-              <ListItemText primary="Untitled Folder" sx={{ paddingRight: 42 }} />
+              <ListItemText primary={"Untitled Folder"} sx={{ paddingRight: 42 }} />
               {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
           </Stack>
@@ -41,7 +41,7 @@ export const Folder = ({ results }: Props) => {
             </List>
           </Collapse>
         </Stack>
-      </ListItem>,
+      </ListItem>
     </List>
   )
 }
