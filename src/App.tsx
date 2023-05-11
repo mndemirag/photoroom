@@ -3,7 +3,7 @@ import './App.css';
 import AddButton from './components/AddButton';
 import loadImage, { LoadImageResult } from 'blueimp-load-image';
 import { API_KEY, API_URL, BASE64_IMAGE_HEADER } from './Constants';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { FolderList } from './components/FolderList';
 import { Folder } from './components/Folder';
@@ -81,13 +81,14 @@ function App() {
   return (
     <div className="App" style={{ padding: "12px" }}>
       <header className="App-header">
-        <Button variant="outlined" startIcon={<Add />} sx={{ marginBottom: 4 }} onClick={() => setFolders(arr => [...arr, 'New Folder'])}>
-          Add a new folder
-        </Button>
+        <Stack direction="row" spacing={4}>
+          <Button variant="outlined" startIcon={<Add />} sx={{ marginBottom: 4 }} onClick={() => setFolders(arr => [...arr, 'New Folder'])}>
+            Add a new folder
+          </Button>
+          <AddButton onImageAdd={onImageAdd} />
+        </Stack>
         <FolderList folders={folders} />
         {results.length !== 0 && <Folder results={results} />}
-        <AddButton onImageAdd={onImageAdd} />
-
       </header>
     </div >
   );
